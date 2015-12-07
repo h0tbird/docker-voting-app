@@ -13,7 +13,7 @@
       "image": "redis",
       "network": "BRIDGE",
       "portMappings": [
-        { "containerPort": 6379, "hostPort": 31201 }
+        { "containerPort": 6379, "hostPort": 0 }
       ],
       "privileged": false,
       "forcePullImage": true

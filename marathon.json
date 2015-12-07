@@ -1,36 +1,180 @@
 {
-  "id": "/voting/voting-app",
-  "instances": 1,
-  "cpus": 1,
-  "mem": 1024,
-  "disk": 0,
-  "ports": [31050],
-  "requirePorts": true,
-  "backoffSeconds": 1,
-  "backoffFactor": 1.15,
-  "maxLaunchDelaySeconds": 3600,
-  "container": {
-    "type": "DOCKER",
-    "docker": {
-      "image": "h0tbird/voting-app",
-      "network": "HOST",
-      "privileged": false,
-      "forcePullImage": false
-    }
-  },
-  "healthChecks": [
+  "id": "/foo",
+  "apps": [],
+  "groups": [
     {
-      "gracePeriodSeconds": 120,
-      "intervalSeconds": 30,
-      "maxConsecutiveFailures": 3,
-      "path": "/",
-      "portIndex": 0,
-      "protocol": "HTTP",
-      "timeoutSeconds": 5
+      "id": "/foo/tools",
+      "apps": [
+        {
+          "id": "/foo/tools/oauth-server",
+          "instances": 2,
+          "cpus": 1,
+          "mem": 1024,
+          "disk": 0,
+          "constraints": [
+            [
+              "hostname",
+              "UNIQUE"
+            ]
+          ],
+          "uris": [],
+          "storeUrls": [],
+          "ports": [
+            1980
+          ],
+          "requirePorts": false,
+          "backoffSeconds": 1,
+          "backoffFactor": 1.15,
+          "maxLaunchDelaySeconds": 3600,
+          "container": {
+            "type": "DOCKER",
+            "volumes": [],
+            "docker": {
+              "image": "docker-registry/oauth_server:6d7d463cb8b1517002080a81cf23f9cf7b7fc774",
+              "network": "HOST",
+              "privileged": false,
+              "parameters": [],
+              "forcePullImage": false
+            }
+          },
+          "healthChecks": [
+            {
+              "path": "/",
+              "protocol": "HTTP",
+              "portIndex": 0,
+              "gracePeriodSeconds": 300,
+              "intervalSeconds": 20,
+              "timeoutSeconds": 20,
+              "maxConsecutiveFailures": 3,
+              "ignoreHttp1xx": false
+            }
+          ],
+          "dependencies": [],
+          "upgradeStrategy": {
+            "minimumHealthCapacity": 0.5,
+            "maximumOverCapacity": 0
+          }
+        },
+        {
+          "id": "/foo/tools/datadog-agent",
+          "instances": 5,
+          "cpus": 1,
+          "mem": 512,
+          "disk": 0,
+          "executor": "",
+          "constraints": [
+            [
+              "hostname",
+              "UNIQUE"
+            ]
+          ],
+          "uris": [],
+          "storeUrls": [],
+          "ports": [
+            10018
+          ],
+          "requirePorts": false,
+          "backoffSeconds": 1,
+          "backoffFactor": 1.15,
+          "maxLaunchDelaySeconds": 3600,
+          "container": {
+            "type": "DOCKER",
+            "volumes": [
+              {
+                "containerPath": "/var/run/docker.sock",
+                "hostPath": "/var/run/docker.sock",
+                "mode": "RW"
+              },
+              {
+                "containerPath": "/host/proc/mounts",
+                "hostPath": "/proc/mounts",
+                "mode": "RO"
+              },
+              {
+                "containerPath": "/host/sys/fs/cgroup",
+                "hostPath": "/sys/fs/cgroup/",
+                "mode": "RO"
+              }
+            ],
+            "docker": {
+              "image": "datadog/docker-dd-agent:latest",
+              "network": "HOST",
+              "privileged": true,
+              "parameters": [],
+              "forcePullImage": false
+            }
+          },
+          "healthChecks": [],
+          "dependencies": [],
+          "upgradeStrategy": {
+            "minimumHealthCapacity": 0.5,
+            "maximumOverCapacity": 0
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": "/foo/tools/log",
+          "apps": [],
+          "groups": [],
+          "dependencies": []
+        },
+        {
+          "id": "/foo/tools/docker",
+          "apps": [
+            {
+              "id": "/foo/tools/docker/registry",
+              "instances": 1,
+              "cpus": 0.5,
+              "mem": 4096,
+              "disk": 0,
+              "executor": "",
+              "constraints": [],
+              "uris": [],
+              "storeUrls": [],
+              "ports": [
+                5000
+              ],
+              "requirePorts": false,
+              "backoffSeconds": 1,
+              "backoffFactor": 1.15,
+              "maxLaunchDelaySeconds": 3600,
+              "container": {
+                "type": "DOCKER",
+                "volumes": [
+                  {
+                    "containerPath": "/docker_storage",
+                    "hostPath": "/hdd/tools/docker/registry",
+                    "mode": "RW"
+                  }
+                ],
+                "docker": {
+                  "image": "registry",
+                  "network": "BRIDGE",
+                  "portMappings": [
+                    {
+                      "containerPort": 5000,
+                      "hostPort": 0,
+                      "servicePort": 5000,
+                      "protocol": "tcp"
+                    }
+                  ],
+                  "privileged": false,
+                  "parameters": [],
+                  "forcePullImage": false
+                }
+              },
+              "healthChecks": [],
+              "dependencies": [],
+              "upgradeStrategy": {
+                "minimumHealthCapacity": 1,
+                "maximumOverCapacity": 1
+              }
+            }
+          ],
+          "groups": []
+        }
+      ]
     }
-  ],
-  "upgradeStrategy": {
-    "minimumHealthCapacity": 0,
-    "maximumOverCapacity": 1
-  }
+  ]
 }

@@ -13,7 +13,7 @@ case $1 in
     ;;
 
   restart)
-    curl -sX POST -H "Content-type: application/json" ${MARATHON_URL}/v2/apps/voting/voting-app/restart | jq
+    curl -sX POST -H "Content-type: application/json" ${MARATHON_URL}/v2/apps/voting/redis/restart | jq
     ;;
 
 esac

@@ -8,7 +8,7 @@ def connect_to_redis(host):
 
     while True:
         try:
-            redis = Redis(host=host, db=0)
+            redis = Redis(host=host, port=31201, db=0)
             redis.ping()
             print "Connected to redis"
             return redis

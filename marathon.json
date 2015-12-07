@@ -1,180 +1,317 @@
 {
-  "id": "/foo",
-  "apps": [],
-  "groups": [
+  "id": "/voting",
+  "apps": [
     {
-      "id": "/foo/tools",
-      "apps": [
-        {
-          "id": "/foo/tools/oauth-server",
-          "instances": 2,
-          "cpus": 1,
-          "mem": 1024,
-          "disk": 0,
-          "constraints": [
-            [
-              "hostname",
-              "UNIQUE"
-            ]
-          ],
-          "uris": [],
-          "storeUrls": [],
-          "ports": [
-            1980
-          ],
-          "requirePorts": false,
-          "backoffSeconds": 1,
-          "backoffFactor": 1.15,
-          "maxLaunchDelaySeconds": 3600,
-          "container": {
-            "type": "DOCKER",
-            "volumes": [],
-            "docker": {
-              "image": "docker-registry/oauth_server:6d7d463cb8b1517002080a81cf23f9cf7b7fc774",
-              "network": "HOST",
-              "privileged": false,
-              "parameters": [],
-              "forcePullImage": false
-            }
-          },
-          "healthChecks": [
+      "id": "/voting/postgres",
+      "cmd": null,
+      "args": null,
+      "user": null,
+      "env": {},
+      "instances": 1,
+      "cpus": 1,
+      "mem": 1024,
+      "disk": 0,
+      "executor": "",
+      "constraints": [],
+      "uris": [],
+      "storeUrls": [],
+      "ports": [
+        10001
+      ],
+      "requirePorts": false,
+      "backoffSeconds": 1,
+      "backoffFactor": 1.15,
+      "maxLaunchDelaySeconds": 3600,
+      "container": {
+        "type": "DOCKER",
+        "volumes": [],
+        "docker": {
+          "image": "postgres:9.4",
+          "network": "BRIDGE",
+          "portMappings": [
             {
-              "path": "/",
-              "protocol": "HTTP",
-              "portIndex": 0,
-              "gracePeriodSeconds": 300,
-              "intervalSeconds": 20,
-              "timeoutSeconds": 20,
-              "maxConsecutiveFailures": 3,
-              "ignoreHttp1xx": false
+              "containerPort": 5432,
+              "hostPort": 0,
+              "servicePort": 10001,
+              "protocol": "tcp"
             }
           ],
-          "dependencies": [],
-          "upgradeStrategy": {
-            "minimumHealthCapacity": 0.5,
-            "maximumOverCapacity": 0
-          }
-        },
+          "privileged": false,
+          "parameters": [],
+          "forcePullImage": true
+        }
+      },
+      "healthChecks": [
         {
-          "id": "/foo/tools/datadog-agent",
-          "instances": 5,
-          "cpus": 1,
-          "mem": 512,
-          "disk": 0,
-          "executor": "",
-          "constraints": [
-            [
-              "hostname",
-              "UNIQUE"
-            ]
-          ],
-          "uris": [],
-          "storeUrls": [],
-          "ports": [
-            10018
-          ],
-          "requirePorts": false,
-          "backoffSeconds": 1,
-          "backoffFactor": 1.15,
-          "maxLaunchDelaySeconds": 3600,
-          "container": {
-            "type": "DOCKER",
-            "volumes": [
-              {
-                "containerPath": "/var/run/docker.sock",
-                "hostPath": "/var/run/docker.sock",
-                "mode": "RW"
-              },
-              {
-                "containerPath": "/host/proc/mounts",
-                "hostPath": "/proc/mounts",
-                "mode": "RO"
-              },
-              {
-                "containerPath": "/host/sys/fs/cgroup",
-                "hostPath": "/sys/fs/cgroup/",
-                "mode": "RO"
-              }
-            ],
-            "docker": {
-              "image": "datadog/docker-dd-agent:latest",
-              "network": "HOST",
-              "privileged": true,
-              "parameters": [],
-              "forcePullImage": false
-            }
-          },
-          "healthChecks": [],
-          "dependencies": [],
-          "upgradeStrategy": {
-            "minimumHealthCapacity": 0.5,
-            "maximumOverCapacity": 0
-          }
+          "protocol": "TCP",
+          "portIndex": 0,
+          "gracePeriodSeconds": 120,
+          "intervalSeconds": 30,
+          "timeoutSeconds": 5,
+          "maxConsecutiveFailures": 3,
+          "ignoreHttp1xx": false
         }
       ],
-      "groups": [
-        {
-          "id": "/foo/tools/log",
-          "apps": [],
-          "groups": [],
-          "dependencies": []
-        },
-        {
-          "id": "/foo/tools/docker",
-          "apps": [
+      "dependencies": [],
+      "upgradeStrategy": {
+        "minimumHealthCapacity": 0,
+        "maximumOverCapacity": 1
+      },
+      "labels": {},
+      "acceptedResourceRoles": null,
+      "version": "2015-12-07T16:43:07.719Z",
+      "versionInfo": {
+        "lastScalingAt": "2015-12-07T16:43:07.719Z",
+        "lastConfigChangeAt": "2015-12-07T16:43:07.719Z"
+      }
+    },
+    {
+      "id": "/voting/voting-app",
+      "cmd": null,
+      "args": null,
+      "user": null,
+      "env": {},
+      "instances": 1,
+      "cpus": 1,
+      "mem": 1024,
+      "disk": 0,
+      "executor": "",
+      "constraints": [],
+      "uris": [],
+      "storeUrls": [],
+      "ports": [
+        10004
+      ],
+      "requirePorts": false,
+      "backoffSeconds": 1,
+      "backoffFactor": 1.15,
+      "maxLaunchDelaySeconds": 3600,
+      "container": {
+        "type": "DOCKER",
+        "volumes": [],
+        "docker": {
+          "image": "h0tbird/voting-app",
+          "network": "BRIDGE",
+          "portMappings": [
             {
-              "id": "/foo/tools/docker/registry",
-              "instances": 1,
-              "cpus": 0.5,
-              "mem": 4096,
-              "disk": 0,
-              "executor": "",
-              "constraints": [],
-              "uris": [],
-              "storeUrls": [],
-              "ports": [
-                5000
-              ],
-              "requirePorts": false,
-              "backoffSeconds": 1,
-              "backoffFactor": 1.15,
-              "maxLaunchDelaySeconds": 3600,
-              "container": {
-                "type": "DOCKER",
-                "volumes": [
-                  {
-                    "containerPath": "/docker_storage",
-                    "hostPath": "/hdd/tools/docker/registry",
-                    "mode": "RW"
-                  }
-                ],
-                "docker": {
-                  "image": "registry",
-                  "network": "BRIDGE",
-                  "portMappings": [
-                    {
-                      "containerPort": 5000,
-                      "hostPort": 0,
-                      "servicePort": 5000,
-                      "protocol": "tcp"
-                    }
-                  ],
-                  "privileged": false,
-                  "parameters": [],
-                  "forcePullImage": false
-                }
-              },
-              "healthChecks": [],
-              "dependencies": [],
-              "upgradeStrategy": {
-                "minimumHealthCapacity": 1,
-                "maximumOverCapacity": 1
-              }
+              "containerPort": 80,
+              "hostPort": 0,
+              "servicePort": 10004,
+              "protocol": "tcp"
             }
           ],
-          "groups": []
+          "privileged": false,
+          "parameters": [],
+          "forcePullImage": true
         }
-      ]
+      },
+      "healthChecks": [
+        {
+          "path": "/",
+          "protocol": "HTTP",
+          "portIndex": 0,
+          "gracePeriodSeconds": 120,
+          "intervalSeconds": 30,
+          "timeoutSeconds": 5,
+          "maxConsecutiveFailures": 3,
+          "ignoreHttp1xx": false
+        }
+      ],
+      "dependencies": [],
+      "upgradeStrategy": {
+        "minimumHealthCapacity": 0,
+        "maximumOverCapacity": 1
+      },
+      "labels": {},
+      "acceptedResourceRoles": null,
+      "version": "2015-12-07T16:52:04.931Z",
+      "versionInfo": {
+        "lastScalingAt": "2015-12-07T16:52:04.931Z",
+        "lastConfigChangeAt": "2015-12-07T16:52:04.931Z"
+      }
+    },
+    {
+      "id": "/voting/result-app",
+      "cmd": null,
+      "args": null,
+      "user": null,
+      "env": {},
+      "instances": 1,
+      "cpus": 1,
+      "mem": 1024,
+      "disk": 0,
+      "executor": "",
+      "constraints": [],
+      "uris": [],
+      "storeUrls": [],
+      "ports": [
+        10003
+      ],
+      "requirePorts": false,
+      "backoffSeconds": 1,
+      "backoffFactor": 1.15,
+      "maxLaunchDelaySeconds": 3600,
+      "container": {
+        "type": "DOCKER",
+        "volumes": [],
+        "docker": {
+          "image": "h0tbird/result-app",
+          "network": "BRIDGE",
+          "portMappings": [
+            {
+              "containerPort": 80,
+              "hostPort": 0,
+              "servicePort": 10003,
+              "protocol": "tcp"
+            }
+          ],
+          "privileged": false,
+          "parameters": [
+            {
+              "key": "env",
+              "value": "PORT=80"
+            }
+          ],
+          "forcePullImage": true
+        }
+      },
+      "healthChecks": [
+        {
+          "path": "/",
+          "protocol": "HTTP",
+          "portIndex": 0,
+          "gracePeriodSeconds": 120,
+          "intervalSeconds": 30,
+          "timeoutSeconds": 5,
+          "maxConsecutiveFailures": 3,
+          "ignoreHttp1xx": false
+        }
+      ],
+      "dependencies": [],
+      "upgradeStrategy": {
+        "minimumHealthCapacity": 0,
+        "maximumOverCapacity": 1
+      },
+      "labels": {},
+      "acceptedResourceRoles": null,
+      "version": "2015-12-07T16:51:44.285Z",
+      "versionInfo": {
+        "lastScalingAt": "2015-12-07T16:51:44.285Z",
+        "lastConfigChangeAt": "2015-12-07T16:51:44.285Z"
+      }
+    },
+    {
+      "id": "/voting/worker",
+      "cmd": null,
+      "args": null,
+      "user": null,
+      "env": {},
+      "instances": 1,
+      "cpus": 1,
+      "mem": 1024,
+      "disk": 0,
+      "executor": "",
+      "constraints": [],
+      "uris": [],
+      "storeUrls": [],
+      "ports": [
+        10002
+      ],
+      "requirePorts": false,
+      "backoffSeconds": 1,
+      "backoffFactor": 1.15,
+      "maxLaunchDelaySeconds": 3600,
+      "container": {
+        "type": "DOCKER",
+        "volumes": [],
+        "docker": {
+          "image": "h0tbird/worker",
+          "network": "BRIDGE",
+          "privileged": false,
+          "parameters": [],
+          "forcePullImage": true
+        }
+      },
+      "healthChecks": [],
+      "dependencies": [],
+      "upgradeStrategy": {
+        "minimumHealthCapacity": 0,
+        "maximumOverCapacity": 1
+      },
+      "labels": {},
+      "acceptedResourceRoles": null,
+      "version": "2015-12-07T16:44:23.825Z",
+      "versionInfo": {
+        "lastScalingAt": "2015-12-07T16:44:23.825Z",
+        "lastConfigChangeAt": "2015-12-07T16:44:23.825Z"
+      }
+    },
+    {
+      "id": "/voting/redis",
+      "cmd": null,
+      "args": null,
+      "user": null,
+      "env": {},
+      "instances": 1,
+      "cpus": 1,
+      "mem": 1024,
+      "disk": 0,
+      "executor": "",
+      "constraints": [],
+      "uris": [],
+      "storeUrls": [],
+      "ports": [
+        10000
+      ],
+      "requirePorts": false,
+      "backoffSeconds": 1,
+      "backoffFactor": 1.15,
+      "maxLaunchDelaySeconds": 3600,
+      "container": {
+        "type": "DOCKER",
+        "volumes": [],
+        "docker": {
+          "image": "redis",
+          "network": "BRIDGE",
+          "portMappings": [
+            {
+              "containerPort": 6379,
+              "hostPort": 0,
+              "servicePort": 10000,
+              "protocol": "tcp"
+            }
+          ],
+          "privileged": false,
+          "parameters": [],
+          "forcePullImage": true
+        }
+      },
+      "healthChecks": [
+        {
+          "protocol": "TCP",
+          "portIndex": 0,
+          "gracePeriodSeconds": 120,
+          "intervalSeconds": 30,
+          "timeoutSeconds": 5,
+          "maxConsecutiveFailures": 3,
+          "ignoreHttp1xx": false
+        }
+      ],
+      "dependencies": [],
+      "upgradeStrategy": {
+        "minimumHealthCapacity": 0,
+        "maximumOverCapacity": 1
+      },
+      "labels": {},
+      "acceptedResourceRoles": null,
+      "version": "2015-12-07T16:42:56.332Z",
+      "versionInfo": {
+        "lastScalingAt": "2015-12-07T16:42:56.332Z",
+        "lastConfigChangeAt": "2015-12-07T16:42:56.332Z"
+      }
     }
-  ]
+  ],
+  "groups": [],
+  "dependencies": [],
+  "version": "2015-12-07T16:52:04.931Z"
 }
